@@ -18,15 +18,15 @@ type AmazonMusicSong struct {
 }
 
 type amazonMusicJSONResponse struct {
-	playlistList []struct {
-		tracks []struct {
-			album struct {
-				title string
-			}
-			title     string
-			itemIndex int
-		}
-	}
+	PlaylistList []struct {
+		Tracks []struct {
+			Album struct {
+				Title string `json:"title"`
+			} `json:"album"`
+			Title     string `json:"title"`
+			ItemIndex int    `json:"itemIndex"`
+		} `json:"tracks"`
+	} `json:"playlistList"`
 }
 
 // GetAmazonMusicTopSongs returns ranked list of songs.
@@ -92,17 +92,18 @@ func GetAmazonMusicTopSongs() []AmazonMusicSong {
 			var songsResponseJSON amazonMusicJSONResponse
 			if r.StatusCode == 200 {
 				json.Unmarshal(r.Body, &songsResponseJSON)
-				if songsResponseJSON.playlistList != nil && songsResponseJSON.playlistList[0].tracks != nil {
-					for _, song := range songsResponseJSON.playlistList[0].tracks {
+				if songsResponseJSON.PlaylistList != nil && songsResponseJSON.PlaylistList[0].Tracks != nil {
+					for _, song := range songsResponseJSON.PlaylistList[0].Tracks {
 						localSong := AmazonMusicSong{
-							Title: song.title,
-							Album: song.album.title,
-							Rank:  song.itemIndex + 1,
+							Title: song.Title,
+							Album: song.Album.Title,
+							Rank:  song.ItemIndex + 1,
 						}
 						songs = append(songs, localSong)
 					}
 				} else {
-					fmt.Println("playListList is nill or tracks is nil", string(r.Body), "status", r.StatusCode)
+					js, _ := json.Marshal(songsResponseJSON)
+					fmt.Println("playListList is nill or tracks is nil", "status", string(js), string(r.Body))
 				}
 			} else {
 				fmt.Println("status code is not 200. body", string(r.Body), "status", r.StatusCode)
