@@ -2,57 +2,76 @@ package rankings
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/ananduee/raker/data"
 	"github.com/gocolly/colly"
 )
 
-// GannaSong represents one song from mirchi.
-type GannaSong struct {
-	ID    string
-	Title string
-	Album string
-	Rank  int
+// GannaPlaylistFetcherFetcher will fetch all songs from gaana playlist
+type GannaPlaylistFetcherFetcher struct {
+	URL          string
+	MaxSongs     int
+	PlaylistType string
 }
 
-// GetGaanaHindiSongs returns ranked list of songs.
-func GetGaanaHindiSongs() []GannaSong {
-	songs := []GannaSong{}
+type gaanaSongSpanJSON struct {
+	ID         string `json:"id"`
+	AlbumTitle string `json:"albumtitle"`
+}
+
+// Get list of songs from configured playlist
+func (p *GannaPlaylistFetcherFetcher) Get() (*data.Playlist, error) {
+	songs := make([]data.Song, p.MaxSongs)
 	songsAlbum := make(map[string]string)
 	c := colly.NewCollector()
+	var callbackErr *data.Error
 	c.OnHTML(".s_l", func(e *colly.HTMLElement) {
+		if callbackErr != nil {
+			return
+		}
 		dataValue := e.Attr("data-value")
 		if !strings.HasPrefix(dataValue, "song") {
 			return
 		}
 
-		song := GannaSong{}
+		song := data.Song{}
 		song.ID = strings.Replace(dataValue, "song", "", 1)
 		song.Title = e.ChildText(".playlist_thumb_det > .sng_c")
 		rank, err := strconv.Atoi(e.ChildText("._c"))
-		if err == nil {
-			song.Rank = rank
+		if err != nil {
+			callbackErr = data.NewError("temporary", fmt.Sprintf("Failed to find rank for song: %s", song.Title))
+		} else if rank > p.MaxSongs {
+			callbackErr = data.NewError("permanent", fmt.Sprintf("Rank found for song %s = %d is outside max songs range.", song.Title, rank))
+		} else {
+			songs[rank-1] = song
 		}
-		songs = append(songs, song)
 	})
 	c.OnHTML("span", func(e *colly.HTMLElement) {
 		spanID := e.Attr("id")
 		if !strings.HasPrefix(spanID, "parent-row-song") {
 			return
 		}
-		var songJSON map[string]interface{}
+		var songJSON gaanaSongSpanJSON
 		json.Unmarshal([]byte(e.DOM.Text()), &songJSON)
-		songID := songJSON["id"].(string)
-		albumName := songJSON["albumtitle"].(string)
+		songID := songJSON.ID
+		albumName := songJSON.AlbumTitle
 		songsAlbum[songID] = albumName
 	})
-	c.Visit("https://gaana.com/playlist/gaana-dj-bollywood-top-50-1")
+	c.Visit(p.URL)
 	c.Wait()
+	if callbackErr != nil {
+		return nil, callbackErr
+	}
 	for i, song := range songs {
 		album := songsAlbum[song.ID]
 		songs[i].Album = album
 	}
-
-	return songs
+	return &data.Playlist{
+		Provider: "ganna",
+		Type:     p.PlaylistType,
+		Songs:    songs,
+	}, nil
 }

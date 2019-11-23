@@ -8,8 +8,12 @@ import (
 )
 
 func main() {
-	f := rankings.MirchiTop20Fetcher{}
-	songs, err := f.Get()
+	ganna := rankings.GannaPlaylistFetcherFetcher{
+		URL:          "https://gaana.com/playlist/gaana-dj-bollywood-top-50-1",
+		MaxSongs:     50,
+		PlaylistType: "living_list",
+	}
+	songs, err := ganna.Get()
 	if err != nil {
 		panic(err)
 	}
