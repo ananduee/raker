@@ -8,10 +8,12 @@ import (
 )
 
 func main() {
-	ganna := rankings.GannaPlaylistFetcherFetcher{
-		URL:          "https://gaana.com/playlist/gaana-dj-bollywood-top-50-1",
+	ganna := rankings.AmazonMusicPlaylistFetcher{
+		URL:          "https://music.amazon.in/playlists/B081HYGQ5S",
 		MaxSongs:     50,
 		PlaylistType: "living_list",
+		Asin:         "B081HYGQ5S",
+		LookupURL:    "https://music.amazon.in/EU/api/muse/legacy/lookup",
 	}
 	songs, err := ganna.Get()
 	if err != nil {

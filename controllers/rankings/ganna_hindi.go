@@ -10,8 +10,8 @@ import (
 	"github.com/gocolly/colly"
 )
 
-// GannaPlaylistFetcherFetcher will fetch all songs from gaana playlist
-type GannaPlaylistFetcherFetcher struct {
+// GannaPlaylistFetcher will fetch all songs from gaana playlist
+type GannaPlaylistFetcher struct {
 	URL          string
 	MaxSongs     int
 	PlaylistType string
@@ -23,7 +23,7 @@ type gaanaSongSpanJSON struct {
 }
 
 // Get list of songs from configured playlist
-func (p *GannaPlaylistFetcherFetcher) Get() (*data.Playlist, error) {
+func (p *GannaPlaylistFetcher) Get() (*data.Playlist, error) {
 	songs := make([]data.Song, p.MaxSongs)
 	songsAlbum := make(map[string]string)
 	c := colly.NewCollector()
