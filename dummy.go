@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	songs := rankings.GetAmazonMusicTopSongs()
+	f := rankings.MirchiTop20Fetcher{}
+	songs, err := f.Get()
+	if err != nil {
+		panic(err)
+	}
 	out, err := json.Marshal(songs)
 	if err != nil {
 		panic(err)
