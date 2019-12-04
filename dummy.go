@@ -8,12 +8,8 @@ import (
 )
 
 func main() {
-	ganna := rankings.AmazonMusicPlaylistFetcher{
-		URL:          "https://music.amazon.in/playlists/B081HYGQ5S",
-		MaxSongs:     50,
-		PlaylistType: "living_list",
-		Asin:         "B081HYGQ5S",
-		LookupURL:    "https://music.amazon.in/EU/api/muse/legacy/lookup",
+	ganna := rankings.SaavnFetcher{
+		URL: "https://www.jiosaavn.com/featured/weekly-top-songs/8MT-LQlP35c_",
 	}
 	songs, err := ganna.Get()
 	if err != nil {
@@ -23,6 +19,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("this is just aamzing")
 
 	fmt.Println(string(out))
 }
