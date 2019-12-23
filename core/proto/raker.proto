@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message Task {
+    int32 version = 1;
+    string name = 2;
+}
+
+enum WorkerJobStatus {
+    NOT_STARTED = 0;
+    IN_PROGRESS = 1;
+}
+
+message WorkerJob {
+    int32 version = 1;
+    Task task = 2;
+    WorkerJobStatus status = 3;
+    google.protobuf.Duration period = 4;
+    google.protobuf.Timestamp prev = 5;
+    google.protobuf.Timestamp next = 6;
+}
