@@ -15,15 +15,13 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
-	github.com/gogo/protobuf v1.3.1
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/rs/zerolog v1.16.0
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.1 // indirect
-	golang.org/x/net v0.0.0-20191206103017-1ddd1de85cb0 // indirect
-	golang.org/x/sys v0.0.0-20191204072324-ce4227a45e2e // indirect
+	github.com/ugorji/go v1.2.7 // indirect
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
-	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 )
